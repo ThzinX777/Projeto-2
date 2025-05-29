@@ -1,0 +1,507 @@
+```
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>INSANE BET</title>
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      background: linear-gradient(135deg, #8b0000, #330000);
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #app {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    #sidebar {
+      width: 320px;
+      background: #400000;
+      border-right: 2px solid #cc0000;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      overflow-y: auto;
+      box-shadow: inset 5px 0 12px #ff00001a;
+    }
+
+    #sidebar h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      text-align: center;
+      text-shadow: 0 0 8px #ff0000;
+      letter-spacing: 1.5px;
+    }
+
+    .winner-list {
+      list-style: none;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .winner-item {
+      background: #660000a0;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 0 10px #ff2222aa;
+      animation: fadeInSlide 0.8s ease forwards;
+    }
+
+    .winner-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-shadow: 1px 1px 3px #ff0000;
+    }
+
+    .winner-amount {
+      margin-top: 6px;
+      color: #ffd700;
+      font-weight: 600;
+      font-size: 1.3rem;
+      text-shadow: 1px 1px 5px #ffaa00;
+    }
+
+    @keyframes fadeInSlide {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    #main {
+      flex-grow: 1;
+      background: #1a0000;
+      display: flex;
+      flex-direction: column;
+      padding: 30px 40px;
+      overflow-y: auto;
+    }
+
+    header {
+      margin-bottom: 30px;
+      text-align: center;
+      user-select: none;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      letter-spacing: 3px;
+      color: #ff4444;
+      text-shadow: 0 0 12px #ff0000;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      color: #ff8b8b;
+      margin-top: 6px;
+    }
+
+    .betting-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      flex-grow: 1;
+    }
+
+    .bet-card {
+      background: #330000;
+      border-radius: 16px;
+      padding: 24px 20px;
+      box-shadow: 0 0 15px #cc0000bb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+      transition: transform 0.3s ease;
+      user-select: none;
+    }
+
+    .bet-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #ff0000dd;
+    }
+
+    .bet-card h3 {
+      margin-bottom: 18px;
+      font-size: 1.6rem;
+      text-align: center;
+      color: #ff2222;
+      text-shadow: 0 0 8px #ff0000;
+    }
+
+    .bet-input {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .bet-input label {
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #ff6161;
+    }
+
+    .bet-input input, .bet-input select {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      outline: none;
+      background: #660000;
+      color: #fff;
+      box-shadow: inset 0 0 6px #ff6666;
+    }
+
+    .bet-button {
+      background: #d40000;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 12px 0;
+      border: none;
+      border-radius: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s ease;
+      box-shadow: 0 0 10px #ff0000cc;
+      user-select: none;
+    }
+
+    .bet-button:hover {
+      background: #ff0000;
+      box-shadow: 0 0 20px #ff4444;
+    }
+
+    .result {
+      margin-top: 12px;
+      min-height: 24px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: center;
+      user-select: text;
+      color: #ffd700;
+      text-shadow: 0 0 8px #ffaa00;
+    }
+
+    #sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #sidebar::-webkit-scrollbar-track {
+      background: #400000;
+    }
+
+    #sidebar::-webkit-scrollbar-thumb {
+      background: #cc0000;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 900px) {
+      #app {
+        flex-direction: column;
+      }
+      #sidebar {
+        width: 100%;
+        height: 180px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        border-right: none;
+        border-bottom: 2px solid #cc0000;
+        flex-direction: row;
+        padding: 15px 10px;
+      }
+      .winner-list {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 0;
+        overflow-x: auto;
+      }
+      .winner-item {
+        min-width: 260px;
+        margin-right: 15px;
+        margin-bottom: 0;
+        animation: none;
+      }
+      #main {
+        height: calc(100vh - 180px);
+        overflow-y: auto;
+        padding: 20px;
+      }
+      .betting-section {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar" aria-label="Lista de ganhadores">
+      <h2>Últimos Ganhadores</h2>
+      <ul class="winner-list" id="winnerList" aria-live="polite" aria-relevant="additions"></ul>
+    </aside>
+    <main id="main">
+      <header>
+        <h1>INSANE BET</h1>
+        <p>Várias maneiras de apostar e ganhar muito!</p>
+      </header>
+
+      <section class="betting-section" aria-label="Maneiras de apostar">
+
+        <article class="bet-card" aria-labelledby="rouletteTitle">
+          <h3 id="rouletteTitle">Roleta Simples</h3>
+          <div class="bet-input">
+            <label for="rouletteNumber">Escolha um número (0 a 36):</label>
+            <input type="number" id="rouletteNumber" min="0" max="36" value="7" />
+          </div>
+          <div class="bet-input">
+            <label for="rouletteAmount">Valor da aposta (R$):</label>
+            <input type="number" id="rouletteAmount" min="1" max="10000" value="100" />
+          </div>
+          <button class="bet-button" id="rouletteBetBtn" aria-describedby="rouletteResult">Apostar</button>
+          <div class="result" id="rouletteResult" aria-live="polite"></div>
+        </article>
+
+        <article class="bet-card" aria-labelledby="parImparTitle">
+          <h3 id="parImparTitle">Par ou Ímpar</h3>
+          <div class="bet-input">
+            <label for="parImparChoice">Escolha:</label>
+            <select id="parImparChoice" aria-required="true">
+              <option value="par">Par</option>
+              <option value="impar">Ímpar</option>
+            </select>
+          </div>
+          <div class="bet-input">
+            <label for="parImparAmount">Valor da aposta (R$):</label>
+            <input type="number" id="parImparAmount" min="1" max="10000" value="50" />
+          </div>
+          <button class="bet-button" id="parImparBetBtn" aria-describedby="parImparResult">Apostar</button>
+          <div class="result" id="parImparResult" aria-live="polite"></div>
+        </article>
+        <article class="bet-card" aria-labelledby="diceRollTitle">
+          <h3 id="diceRollTitle">Lançar Dados</h3>
+          <div class="bet-input">
+            <label for="diceGuess">Adivinhe o número (1 a 6):</label>
+            <input type="number" id="diceGuess" min="1" max="6" value="3" />
+          </div>
+          <div class="bet-input">
+            <label for="diceAmount">Valor da aposta (R$):</label>
+            <input type="number" id="diceAmount" min="1" max="10000" value="20" />
+          </div>
+          <button class="bet-button" id="diceBetBtn" aria-describedby="diceResult">Apostar</button>
+          <div class="result" id="diceResult" aria-live="polite"></div>
+        </article>
+
+        <article class="bet-card" aria-labelledby="highLowTitle">
+          <h3 id="highLowTitle">Alto ou Baixo</h3>
+          <div class="bet-input">
+            <label for="highLowChoice">Escolha:</label>
+            <select id="highLowChoice" aria-required="true">
+              <option value="alto">Alto (4,5,6)</option>
+              <option value="baixo">Baixo (1,2,3)</option>
+            </select>
+          </div>
+          <div class="bet-input">
+            <label for="highLowAmount">Valor da aposta (R$):</label>
+            <input type="number" id="highLowAmount" min="1" max="10000" value="75" />
+          </div>
+          <button class="bet-button" id="highLowBetBtn" aria-describedby="highLowResult">Apostar</button>
+          <div class="result" id="highLowResult" aria-live="polite"></div>
+        </article>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const winnerList = document.getElementById('winnerList');
+    const names = [
+      'Lucas Silva',
+      'Mariana Costa',
+      'Pedro Oliveira',
+      'Ana Paula',
+      'João Pedro',
+      'Laura Gomes',
+      'Bruno Souza',
+      'Camila Santos',
+      'Felipe Lima',
+      'Juliana Rodrigues',
+      'Rafael Alves',
+      'Fernanda Melo'
+    ];
+
+    function formatBRL(value) {
+      return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function addWinner() {
+      const name = names[Math.floor(Math.random() * names.length)];
+      const amount = Math.floor(Math.random() * 20000) + 5000;
+      const newWinner = document.createElement('li');
+      newWinner.classList.add('winner-item');
+      newWinner.innerHTML = `
+        <span class="winner-name">${name}</span>
+        <span class="winner-amount">ganhou ${formatBRL(amount)}</span>
+      `;
+
+      winnerList.insertBefore(newWinner, winnerList.firstChild);
+
+      if (winnerList.children.length > 15) {
+        winnerList.removeChild(winnerList.lastChild);
+      }
+    }
+
+    setInterval(addWinner, 3500);
+    addWinner();
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+
+    const rouletteBtn = document.getElementById('rouletteBetBtn');
+    const rouletteNumberInput = document.getElementById('rouletteNumber');
+    const rouletteAmountInput = document.getElementById('rouletteAmount');
+    const rouletteResult = document.getElementById('rouletteResult');
+
+    rouletteBtn.addEventListener('click', () => {
+      const chosen = parseInt(rouletteNumberInput.value);
+      const betAmount = parseFloat(rouletteAmountInput.value);
+
+      if (isNaN(chosen) || chosen < 0 || chosen > 36) {
+        rouletteResult.textContent = 'Número inválido! Escolha entre 0 e 36.';
+        return;
+      }
+      if (betAmount <= 0) {
+        rouletteResult.textContent = 'Informe um valor de aposta válido.';
+        return;
+      }
+
+      const winningNumber = getRandomInt(0, 36);
+      if (chosen === winningNumber) {
+        const prize = betAmount * 35; 
+        rouletteResult.textContent = `Parabéns! Número sorteado: ${winningNumber}. Você ganhou ${formatBRL(prize)}!`;
+        addWinnerFake(prize);
+      } else {
+        rouletteResult.textContent = `Que pena! Número sorteado: ${winningNumber}. Você perdeu R$${betAmount.toFixed(2)}.`;
+      }
+    });
+
+    const parImparBtn = document.getElementById('parImparBetBtn');
+    const parImparChoice = document.getElementById('parImparChoice');
+    const parImparAmount = document.getElementById('parImparAmount');
+    const parImparResult = document.getElementById('parImparResult');
+
+    parImparBtn.addEventListener('click', () => {
+      const choice = parImparChoice.value;
+      const betAmount = parseFloat(parImparAmount.value);
+
+      if (betAmount <= 0) {
+        parImparResult.textContent = 'Informe um valor de aposta válido.';
+        return;
+      }
+
+      const number = getRandomInt(1, 100);
+      const isEven = number % 2 === 0;
+
+      if ((choice === 'par' && isEven) || (choice === 'impar' && !isEven)) {
+        const prize = betAmount * 2;
+        parImparResult.textContent = `Sorteado: ${number} (${isEven ? 'Par' : 'Ímpar'}) - Você ganhou ${formatBRL(prize)}!`;
+        addWinnerFake(prize);
+      } else {
+        parImparResult.textContent = `Sorteado: ${number} (${isEven ? 'Par' : 'Ímpar'}) - Você perdeu R$${betAmount.toFixed(2)}.`;
+      }
+    });
+
+    const diceBtn = document.getElementById('diceBetBtn');
+    const diceGuess = document.getElementById('diceGuess');
+    const diceAmount = document.getElementById('diceAmount');
+    const diceResult = document.getElementById('diceResult');
+
+    diceBtn.addEventListener('click', () => {
+      const guess = parseInt(diceGuess.value);
+      const betAmount = parseFloat(diceAmount.value);
+
+      if (isNaN(guess) || guess < 1 || guess > 6) {
+        diceResult.textContent = 'Palpite inválido! Escolha um número entre 1 e 6.';
+        return;
+      }
+      if (betAmount <= 0) {
+        diceResult.textContent = 'Informe um valor de aposta válido.';
+        return;
+      }
+
+      const roll = getRandomInt(1, 6);
+      if (guess === roll) {
+        const prize = betAmount * 6;
+        diceResult.textContent = `Dado sorteado: ${roll} - Parabéns, você ganhou ${formatBRL(prize)}!`;
+        addWinnerFake(prize);
+      } else {
+        diceResult.textContent = `Dado sorteado: ${roll} - Você perdeu R$${betAmount.toFixed(2)}.`;
+      }
+    });
+
+    const highLowBtn = document.getElementById('highLowBetBtn');
+    const highLowChoice = document.getElementById('highLowChoice');
+    const highLowAmount = document.getElementById('highLowAmount');
+    const highLowResult = document.getElementById('highLowResult');
+
+    highLowBtn.addEventListener('click', () => {
+      const choice = highLowChoice.value;
+      const betAmount = parseFloat(highLowAmount.value);
+
+      if (betAmount <= 0) {
+        highLowResult.textContent = 'Informe um valor de aposta válido.';
+        return;
+      }
+
+      const roll = getRandomInt(1, 6);
+      const isHigh = roll >= 4;
+
+      if ((choice === 'alto' && isHigh) || (choice === 'baixo' && !isHigh)) {
+        const prize = betAmount * 2;
+        highLowResult.textContent = `Número sorteado: ${roll} (${isHigh ? 'Alto' : 'Baixo'}) - Você ganhou ${formatBRL(prize)}!`;
+        addWinnerFake(prize);
+      } else {
+        highLowResult.textContent = `Número sorteado: ${roll} (${isHigh ? 'Alto' : 'Baixo'}) - Você perdeu R$${betAmount.toFixed(2)}.`;
+      }
+    });
+
+    function addWinnerFake(amount) {
+      const name = names[Math.floor(Math.random() * names.length)];
+      const newWinner = document.createElement('li');
+      newWinner.classList.add('winner-item');
+      newWinner.innerHTML = `
+        <span class="winner-name">${name}</span>
+        <span class="winner-amount">ganhou ${formatBRL(amount)}</span>
+      `;
+      winnerList.insertBefore(newWinner, winnerList.firstChild);
+      if (winnerList.children.length > 15) {
+        winnerList.removeChild(winnerList.lastChild);
+      }
+    }
+  </script>
+</body>
+</html>
+```
